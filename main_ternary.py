@@ -51,8 +51,8 @@ optimizer_main = torch.optim.Adam(
                     lr=0.001
                 )
 # optimizers for full precision and scaling factors
-optimizer_full_precision_weights = torch.optim.Adam(full_precision_copies, lr=0.0001)
-optimizer_scaling_factors = torch.optim.Adam(scaling_factors, lr=0.0001)
+optimizer_full_precision_weights = torch.optim.Adam(full_precision_copies, lr=0.00001)
+optimizer_scaling_factors = torch.optim.Adam(scaling_factors, lr=0.00001)
 
 def train():
     total_step = len(train_loader)
@@ -103,13 +103,23 @@ def test():
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+        accuracy = 100 * correct / total
+        if accuracy >= 96.5:
+            print('Saving model now!')
+            save_model()
+        print('Test Accuracy of the model on the 10000 test images: {} %'.format(accuracy))
 
-        print('Test Accuracy of the model on the 10000 test images: {} %'.format(100 * correct / total))
-
+def save_model(model = model_to_quantify):
+    dirname = os.path.dirname(__file__)
+    dirname = os.path.join(dirname, 'weights')
+    weightname = os.path.join(dirname, '{}.ckpt'.format(model.name))
+    torch.save(model.state_dict(), weightname)
 
 if __name__ == '__main__':
     assert full_precision_copies[0].requires_grad is True
     assert len(weights_to_be_quantized) == len(scaling_factors)
     assert len(weights_to_be_quantized) == len(full_precision_copies)
-    train()
+    for epoch in range(num_epochs):
+        print('=== Epoch {} ==='.format(epoch))
+        train()
     print(scaling_factors)
