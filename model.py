@@ -27,3 +27,4 @@ class ConvNet(nn.Module):
         return out
 
 model_full = ConvNet(name='original').to(device)
+model_to_quantify = ConvNet(name='quantized').to(device)
