@@ -4,7 +4,7 @@ import torch.nn as nn
 
 from model import model_to_quantify, device
 from data import train_loader, test_loader
-from quantification import quantize
+from quantification import quantize, get_quantization_grads
 
 criterion = nn.CrossEntropyLoss()
 num_epochs = 2
@@ -40,18 +40,19 @@ weights_to_be_quantized = [ param for name,param in model_to_quantify.named_para
 full_precision_copies = [ param.data.clone().requires_grad_().to(device) for param in weights_to_be_quantized ]
 
 # for each parameter to be quantized, create a trainable tensor of scaling factors (w_p and w_n)
-scaling_factors = torch.ones(len(weights_to_be_quantized), 2, requires_grad=True).to(device)
+# scaling_factors = torch.ones(len(weights_to_be_quantized), 2, requires_grad=True).to(device)
+scaling_factors = [torch.ones(2, requires_grad=True).to(device) for _ in range(len(weights_to_be_quantized))]
 
 # create optimizers for different parameter groups
 
 # optimizer for the networks parameters containing quantized and batch norm weights
 optimizer_main = torch.optim.Adam(
                     [{'params': bn_weights}, {'params': weights_to_be_quantized}],
-                    lr=0.0001
+                    lr=0.001
                 )
 # optimizers for full precision and scaling factors
-optimizer_full_precision_weights = torch.optim.Adam(full_precision_copies)
-optimizer_scaling_factors = torch.optim.Adam([scaling_factors])
+optimizer_full_precision_weights = torch.optim.Adam(full_precision_copies, lr=0.0001)
+optimizer_scaling_factors = torch.optim.Adam(scaling_factors, lr=0.0001)
 
 def train():
     total_step = len(train_loader)
@@ -73,39 +74,42 @@ def train():
         optimizer_scaling_factors.zero_grad()
         loss.backward()
 
-        assert weights_to_be_quantized[0].grad is not None
-        assert scaling_factors[0].grad is None
-        assert full_precision_copies[0].grad is None
+        for index, weight in enumerate(weights_to_be_quantized):
+            w_p, w_n = scaling_factors[index]
+            full_precision_data = full_precision_copies[index].data
+            full_precision_grad, w_p_grad, w_n_grad = get_quantization_grads(weight.grad.data, full_precision_data, w_p.item(), w_n.item())
+            full_precision_copies[index].grad = full_precision_grad.to(device)
+            scaling_factors[index].grad = torch.FloatTensor([w_p_grad, w_n_grad]).to(device)
+            weight.grad.data.zero_()
 
-        print('Checks passed')
-        break
+        if (i+1) % 10 == 0:
+            print('Iteration {}, loss: {}'.format(i+1, loss.item()))
+            test()
 
-        # backward pass - manually update gradients for
-        # optimizer_full_precision_weights and optimizer_scaling_factors
-        # also we don't update the quantized weights using gradient descent
-        # so we will set the gradients of quantized weights to zero
-        # TODO
+        optimizer_main.step()
+        optimizer_full_precision_weights.step()
+        optimizer_scaling_factors.step()
 
 
+def test():
+    model_to_quantify.eval()
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in test_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            outputs = model_to_quantify(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+        print('Test Accuracy of the model on the 10000 test images: {} %'.format(100 * correct / total))
 
 
 if __name__ == '__main__':
-    # print(len(bn_weights))
-    # print(len(weights_to_be_quantized))
     assert full_precision_copies[0].requires_grad is True
-    assert len(weights_to_be_quantized) == scaling_factors.size(0)
+    assert len(weights_to_be_quantized) == len(scaling_factors)
     assert len(weights_to_be_quantized) == len(full_precision_copies)
-    # print(scaling_factors.size())
-    # print(scaling_factors[0].requires_grad)
-    # print([i.size() for i in optimizer_main.param_groups[1]['params']])
-    # x = torch.randn(8,1,28,28)
-    # y = model_to_quantify(x)
-    # z = y.mean().abs()
-    # print(z)
-    # z.backward()
-    # print(y.size())
-    # print('=====')
-    # print(weights_to_be_quantized[0].grad) #should not be None
-    # print(scaling_factors[0].grad)  #should be None
-    # print(full_precision_copies[0].grad)    #should be None
     train()
+    print(scaling_factors)
