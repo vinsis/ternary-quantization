@@ -107,7 +107,7 @@ def test():
         if accuracy >= 96.5:
             print('Saving model now!')
             save_model()
-        print('Test Accuracy of the model on the 10000 test images: {} %'.format(accuracy))
+        print('\tAccuracy on 10000 images: {} %'.format(accuracy))
 
 def save_model(model = model_to_quantify):
     dirname = os.path.dirname(__file__)
