@@ -13,6 +13,9 @@ Training models with ternary quantized weights. PyTorch implementation of https:
   - Code for training can be found under `main_original.py`.
 - A copy of the above model (loaded with trained weights) was created (`model_to_quantify`) and was trained using quantization. The trained weight is stored as `weights/quantized.ckpt`.
   - Code for training can be found under `main_ternary.py`. The logs can be found inside the file `logs/quantized_wp_wn_trainable.txt`.
+- I also tried updating the weights __by an equal amount__ in the direction of their gradients. In other words, I took the sign of every parameter's gradient and updated the parameter by a small value (`0.001`) like so:
+  `param.grad.data = torch.sign(param.grad.data) * 0.001`
+  - I got decent results but didn't dig deeper into it. The weights for this model are `weights/autoquantize.ckpt`.
 
 ### Notes:
 - Full precision model gives an accuracy of 98.8%
