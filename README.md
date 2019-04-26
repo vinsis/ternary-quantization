@@ -18,7 +18,7 @@ Training models with ternary quantized weights. PyTorch implementation of https:
 - Full precision model gives an accuracy of 98.8%
 - Quantized model gives an accuracy of 97.8%.
   - However the training was not stable and the model would stop learning a couple of times.
-  - I got good results by using a very small learning rate (`0.00001`) for updating scaling parameters and full precision weights. I also changed slight the way gradients are calculated. Using mean instead of sum in lines 15 an 16, `quantification.py` gave better results:
+  - I got good results by using a very small learning rate (`0.00001`) for updating scaling parameters and full precision weights. I also slightly changed the way gradients are calculated. Using mean instead of sum in lines 15 an 16, `quantification.py` gave better results:
   ```
   w_p_grad = (a * grad_data).mean() # not (a * grad_data).sum()
   w_n_grad = (b * grad_data).mean() # not (b * grad_data).sum()
