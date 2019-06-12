@@ -51,8 +51,8 @@ optimizer_main = torch.optim.Adam(
                     lr=0.001
                 )
 # optimizers for full precision and scaling factors
-optimizer_full_precision_weights = torch.optim.Adam(full_precision_copies, lr=0.00001)
-optimizer_scaling_factors = torch.optim.Adam(scaling_factors, lr=0.00001)
+optimizer_full_precision_weights = torch.optim.Adam(full_precision_copies, lr=0.001)
+optimizer_scaling_factors = torch.optim.Adam(scaling_factors, lr=0.001)
 
 def train():
     total_step = len(train_loader)
@@ -104,7 +104,7 @@ def test():
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
         accuracy = 100 * correct / total
-        if accuracy >= 96.5:
+        if accuracy >= 98.4:
             print('Saving model now!')
             save_model()
         print('\tAccuracy on 10000 images: {} %'.format(accuracy))

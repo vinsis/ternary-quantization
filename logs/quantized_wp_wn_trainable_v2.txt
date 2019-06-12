@@ -1,0 +1,55 @@
+=== Epoch 0 ===
+Iteration 10, loss: 0.10921064019203186
+	Accuracy on 10000 images: 91.61 %
+Iteration 20, loss: 0.2128966897726059
+	Accuracy on 10000 images: 95.63 %
+Iteration 30, loss: 0.6946740746498108
+	Accuracy on 10000 images: 97.07 %
+Iteration 40, loss: 0.0
+	Accuracy on 10000 images: 98.04 %
+Iteration 50, loss: 0.4621486961841583
+	Accuracy on 10000 images: 98.35 %
+Iteration 60, loss: 0.3064645230770111
+	Accuracy on 10000 images: 98.19 %
+Iteration 70, loss: 0.13775737583637238
+	Accuracy on 10000 images: 97.8 %
+Iteration 80, loss: 0.5893713235855103
+	Accuracy on 10000 images: 97.97 %
+Iteration 90, loss: 0.12024127691984177
+	Accuracy on 10000 images: 98.27 %
+Iteration 100, loss: 0.09390382468700409
+Saving model now!
+	Accuracy on 10000 images: 98.52 %
+Iteration 110, loss: 0.0
+Saving model now!
+	Accuracy on 10000 images: 98.52 %
+Iteration 120, loss: 0.32539936900138855
+	Accuracy on 10000 images: 98.04 %
+Iteration 130, loss: 0.23605237901210785
+Saving model now!
+	Accuracy on 10000 images: 98.41 %
+Iteration 140, loss: 0.09215492010116577
+	Accuracy on 10000 images: 98.28 %
+Iteration 150, loss: 0.5238853693008423
+	Accuracy on 10000 images: 97.96 %
+Iteration 160, loss: 0.10518604516983032
+	Accuracy on 10000 images: 98.11 %
+Iteration 170, loss: 0.2523190677165985
+	Accuracy on 10000 images: 97.79 %
+Iteration 180, loss: 0.00587494857609272
+	Accuracy on 10000 images: 98.14 %
+Iteration 190, loss: 0.05473804473876953
+	Accuracy on 10000 images: 98.12 %
+Iteration 200, loss: 0.04333222284913063
+	Accuracy on 10000 images: 98.28 %
+Iteration 210, loss: 0.42413681745529175
+	Accuracy on 10000 images: 98.02 %
+Iteration 220, loss: 0.030421152710914612
+	Accuracy on 10000 images: 97.88 %
+Iteration 230, loss: 0.2965756356716156
+	Accuracy on 10000 images: 96.5 %
+Iteration 240, loss: 0.0006092119147069752
+	Accuracy on 10000 images: 98.23 %
+Iteration 250, loss: 0.03490591421723366
+Saving model now!
+	Accuracy on 10000 images: 98.43 %

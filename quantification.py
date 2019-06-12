@@ -11,7 +11,7 @@ def get_quantization_grads(grad_data, full_precision_data, w_p_data, w_n_data, t
     b = (full_precision_data < -delta).float()
     c = torch.ones_like(full_precision_data) - a - b
 
-    full_precision_grad = a * full_precision_data * w_p_data + b * full_precision_data * w_n_data + c * full_precision_data * 1
+    full_precision_grad = a * grad_data * w_p_data + b * grad_data * w_n_data + c * grad_data * 1
     w_p_grad = (a * grad_data).mean()
     w_n_grad = (b * grad_data).mean()
     return full_precision_grad, w_p_grad, w_n_grad
